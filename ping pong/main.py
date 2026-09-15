@@ -42,8 +42,8 @@ class GameSprite(pygame.sprite.Sprite):
 player_l = GameSprite('racket.png', 5, 200, 4, 50, 150)
 player_r = GameSprite('racket.png', 550, 200, 4, 50, 150)
 ball = GameSprite('tenis_ball.png', 100, 200, 4, 50, 50)
-speed_x = 1
-speed_y = 1
+speed_x = 4
+speed_y = 4
 
 while game:
     for e in pygame.event.get():
@@ -55,7 +55,8 @@ while game:
     player_r.reset()
     player_l.update_l()
     player_r.update_r()
-
+    if pygame.sprite.collide_rect(player_r, ball) or pygame.sprite.collide_rect(player_l, ball):
+        speed_x *= -1
     ball.reset()
     ball.rect.x += speed_x
     ball.rect.y += speed_y
