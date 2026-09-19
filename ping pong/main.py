@@ -39,29 +39,65 @@ class GameSprite(pygame.sprite.Sprite):
     def reset(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
+pygame.font.init()
+font = pygame.font.Font(None, 35)
+win_right = font.render('PLAYER RIGHT WINS!', True, (180, 0, 0))
+win_left = font.render('PLAYER LEFT WINS!', True, (180, 0, 0))
+score_left = 0
+score_right = 0
+
+score_left_text = font.render(f'Score Left: {score_left}', True, (0, 0, 0))
+score_right_text = font.render(f'Score Right: {score_right}', True, (0 ,0, 0))
+
 player_l = GameSprite('racket.png', 5, 200, 4, 50, 150)
 player_r = GameSprite('racket.png', 550, 200, 4, 50, 150)
 ball = GameSprite('tenis_ball.png', 100, 200, 4, 50, 50)
 speed_x = 4
 speed_y = 4
 
+finish = False
+
 while game:
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             game = False
-    window.fill(back)\
-    
-    player_l.reset()
-    player_r.reset()
-    player_l.update_l()
-    player_r.update_r()
-    if pygame.sprite.collide_rect(player_r, ball) or pygame.sprite.collide_rect(player_l, ball):
-        speed_x *= -1
-    ball.reset()
-    ball.rect.x += speed_x
-    ball.rect.y += speed_y
 
-    if ball.rect.y >= 500 or ball.rect.y < 0:
-        speed_y*= -1
+    if not finish:
+        window.fill(back)
+        
+
+        player_l.reset()
+        player_r.reset()
+        player_l.update_l()
+        player_r.update_r()
+        if pygame.sprite.collide_rect(player_r, ball) or pygame.sprite.collide_rect(player_l, ball):
+            speed_x *= -1
+        ball.reset()
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+        if ball.rect.x < 0:
+            score_right += 1
+            ball.rect.x = 250
+            ball.rect.y = 250
+        if ball.rect.x > 600:
+            score_left += 1
+            ball.rect.x = 250
+            ball.rect.y = 250
+
+        if ball.rect.y >= 500 or ball.rect.y < 0:
+            speed_y*= -1
+        
+        if score_right == 10:
+            window.blit(win_right, (150, 150))
+
+            finish = True
+        if score_left == 10:
+            window.blit(win_left, (150, 150))
+            finish = True
+
+        score_left_text = font.render(f'Score Left: {score_left}', True, (0, 0, 0))
+        score_right_text = font.render(f'Score Right: {score_right}', True, (0 ,0, 0))
+        window.blit(score_left_text, (10, 10))
+        window.blit(score_right_text, (410, 10))
     pygame.display.update()
     clock.tick(FPS)
